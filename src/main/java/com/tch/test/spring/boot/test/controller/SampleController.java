@@ -1,5 +1,6 @@
 package com.tch.test.spring.boot.test.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,9 @@ public class SampleController {
     }
     
     @RequestMapping(value={"/delAllUsers"})
-    Long delAllUsers(){
-        return redisService.delAllUsers();
+    String delAllUsers(){
+        redisService.delAllUsers();
+        return "delAllUsers success";
     }
     
     @RequestMapping(value={"/getUsers"})
@@ -36,7 +38,7 @@ public class SampleController {
     
     @RequestMapping(value={"/addUser"})
     String addUser() {
-        redisService.addUser(new User(25, "测试", "上海"));
+        redisService.addUser(new User(25, "测试", "上海", new Date()));
         return "addUser success";
     }
 
