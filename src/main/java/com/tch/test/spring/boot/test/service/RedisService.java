@@ -10,4 +10,5 @@ public interface RedisService {
 
     void addUser(User user);
 
+    Long delAllUsers();
 }

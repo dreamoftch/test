@@ -1,0 +1,10 @@
+1.‘À––com.tch.test.spring.boot.Application
+
+2.
+
+http://localhost:8080/delAllUsers
+
+http://localhost:8080/addUser
+
+http://localhost:8080/getUsers
+
