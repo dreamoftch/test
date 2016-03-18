@@ -28,7 +28,8 @@ public class Application {
     
     @Bean
     public StringRedisTemplate createStringRedisTemplate() {
-        StringRedisTemplate template = new StringRedisTemplate(jedisConnectionFactory);
+        JedisConnectionFactory factory = createJedisConnectionFactory();
+        StringRedisTemplate template = new StringRedisTemplate(factory);
         return template;
     }
 }
