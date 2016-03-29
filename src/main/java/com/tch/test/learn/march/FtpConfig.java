@@ -5,6 +5,11 @@ import java.io.Serializable;
 public class FtpConfig implements Serializable {
     
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * 端口号
      */
     private int port;
