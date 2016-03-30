@@ -1,4 +1,4 @@
-package com.tch.test.learn.march;
+package com.tch.test.learn.march.zookeeper;
  
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;

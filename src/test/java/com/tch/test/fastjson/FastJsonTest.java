@@ -5,12 +5,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.tch.test.common.httpcomponent.httpclient.utils.HttpUtils;
 import com.tch.test.spring.boot.test.vo.User;
 
 public class FastJsonTest {
@@ -37,6 +42,29 @@ public class FastJsonTest {
         System.out.println(mapJson);
         Map<Integer, User> newMap = JSON.parseObject(mapJson, new TypeReference<Map<Integer, User>>() {});
         System.out.println(newMap);
+    }
+    
+    @Test
+    public void testMap1() throws Exception {
+    	Set<Long> townIds = new TreeSet<>();
+    	//查询该城市下全部摄影师列表
+    	String allSurveyStr = HttpUtils.doGet("http://121.40.129.114:8116/UumSOA/agent/getAllSurveys.action?cityId=2");
+        @SuppressWarnings("unchecked")
+		List<JSONObject> agentAreaOrgVos = JSON.parseObject(allSurveyStr).getObject("data", List.class);
+        
+        for(JSONObject agentAreaOrgVo : agentAreaOrgVos){
+            //key:板块，value：这个版块的摄影师id列表
+        	String groupInfoStr = HttpUtils.doGet("http://121.40.129.114:8116/UumSOA/agent/getRelationByGroupIdAndType.action?groupId=" + agentAreaOrgVo.get("agentGroupId") + "&groupType=1");
+        	@SuppressWarnings("unchecked")
+			List<JSONObject> estateVos = JSON.parseObject(groupInfoStr).getObject("data", List.class);
+            if(CollectionUtils.isEmpty(estateVos)){
+                continue;
+            }
+            for(JSONObject estateVo : estateVos){
+            	townIds.add(Long.parseLong(String.valueOf(estateVo.get("areaId"))));
+            }
+        }
+        System.out.println(townIds);
     }
 
 }

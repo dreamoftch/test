@@ -1,4 +1,4 @@
-package com.tch.test.learn.march;
+package com.tch.test.learn.march.zookeeper;
 
 import org.I0Itec.zkclient.ZkClient;
 
