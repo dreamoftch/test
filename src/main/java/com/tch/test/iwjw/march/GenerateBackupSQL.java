@@ -39,7 +39,7 @@ public class GenerateBackupSQL {
 					
 	};
 	
-	private static String sqlFormat = 
+	private static String insertSqlFormat = 
 			"insert into  " +
 			"%s " +
 			"( " +
@@ -50,7 +50,9 @@ public class GenerateBackupSQL {
 			" from %s " +
 			"where %s >= '%s' and %s < '%s';";
 	
-	private static String[] publishDates = {"publishDate", "publishTime", "publishTime"};
+	private static String delSQLFormat = "delete from %s where createTime >= '%s' AND createTime < '%s';";
+	
+	private static String[] publishDates = {"createTime", "createTime", "createTime"};
 
 	public static void main(String[] args) throws IOException {
 		validate();
@@ -69,11 +71,18 @@ public class GenerateBackupSQL {
 	}
 	
 	private static File getStoreFile(String newTable) throws IOException{
-		File file = new File("D:\\工作\\备份数据\\insert_" + newTable + ".txt");
-		if(file.exists()){
-			file.delete();
+		File file = new File("D:\\工作\\备份数据\\hims_1_new.txt");
+		if(!file.exists()){
+			file.createNewFile();
 		}
-		file.createNewFile();
+		return file;
+	}
+	
+	private static File getDelSQLStoreFile() throws IOException{
+		File file = new File("D:\\工作\\备份数据\\hims_1_delete.txt");
+		if(!file.exists()){
+			file.createNewFile();
+		}
 		return file;
 	}
 	
@@ -88,27 +97,45 @@ public class GenerateBackupSQL {
 	public static void handleByTableAndYear(String table, int year, String publishDate, String field) throws IOException{
 		String newTable = table + "_" + year;//存储的表名
 		File file = getStoreFile(newTable);//根据表明获取对应的file
-		FileWriter writer = new FileWriter(file);
+		File delSQLFile = getDelSQLStoreFile();
+		FileWriter writer = new FileWriter(file, true);
+		FileWriter delSQLWriter = new FileWriter(delSQLFile, true);
 		try {
 			//取得该年份的第一天的起始时间
 			Calendar cal = DateUtils.getStartTimeOfYear(year);
 			while(cal.get(Calendar.YEAR) == year){
+				if(year == 2015 && cal.get(Calendar.MONTH) >= 6){
+					break;
+				}
 				//生成指定范围的sql
-				createSQL(cal, year, table, newTable, publishDate, field, writer);
-				writer.write("\r\n");
-				writer.write("select SLEEP(2); ");
-				writer.write("\r\n");
+				createSQL(cal, year, table, newTable, publishDate, field, writer, delSQLWriter);
+				//添加sleep语句
+				sleep(writer, delSQLWriter);
 			}
 			writer.flush();
+			delSQLWriter.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally{
 			if(writer != null){
 				writer.close();
 			}
+			if(delSQLWriter != null){
+				delSQLWriter.close();
+			}
 		}
 	}
 	
+	private static void sleep(FileWriter writer, FileWriter delSQLWriter) throws IOException {
+		writer.write("\r\n");
+		writer.write("select SLEEP(5); ");
+		writer.write("\r\n");
+		
+		delSQLWriter.write("\r\n");
+		delSQLWriter.write("select SLEEP(5); ");
+		delSQLWriter.write("\r\n");
+	}
+
 	/**
 	 * 根据参数生成指定范围的sql
 	 * @param cal
@@ -120,17 +147,22 @@ public class GenerateBackupSQL {
 	 * @param writer
 	 * @throws IOException
 	 */
-	public static void createSQL(Calendar cal, int year, String table, String newTable, String publishDate, String field, FileWriter writer) throws IOException{
+	public static void createSQL(Calendar cal, int year, String table, String newTable, String publishDate, String field, 
+			FileWriter writer, FileWriter delSQLWriter) throws IOException{
 		String from = DateUtils.formatDate(cal.getTime());
 		String to = getEndTime(cal, year);
-		String sql = String.format(sqlFormat, newTable, field, field, table, publishDate, from, publishDate, to);
-		writer.write(sql);
-		System.out.println(sql);
+		String insertSQL = String.format(insertSqlFormat, newTable, field, field, table, publishDate, from, publishDate, to);
+		writer.write(insertSQL);
+		
+		String delSQL = String.format(delSQLFormat, table, from, to);
+		delSQLWriter.write(delSQL);
+		
+		//System.out.println(insertSQL);
 	}
 	
 	private static String getEndTime(Calendar cal, int year){
 		String to = null;
-		moveTwoDays(cal);//往后挪2天
+		moveOneDay(cal);//往后挪1天
 		if(cal.get(Calendar.YEAR) == year){
 			//没有超过当年
 			to = DateUtils.formatDate(cal.getTime());
@@ -142,8 +174,8 @@ public class GenerateBackupSQL {
 		return to;
 	}
 	
-	public static void moveTwoDays(Calendar cal){
-		cal.add(Calendar.DAY_OF_MONTH, 2);
+	public static void moveOneDay(Calendar cal){
+		cal.add(Calendar.DAY_OF_MONTH, 1);
 	}
 	
 }

@@ -8,7 +8,8 @@ import com.tch.test.learn.march.producer_consumer.common.Container;
 import com.tch.test.learn.march.producer_consumer.common.Producer;
 
 /**
- * 测试使用reentrantLock关键字实现的生产者-消费者
+ * 测试使用reentrantLock关键字实现的生产者-消费者<br>
+ * 参考http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/locks/Condition.html
  * @author tianchaohui
  */
 public class ProducerConsumerTest {
