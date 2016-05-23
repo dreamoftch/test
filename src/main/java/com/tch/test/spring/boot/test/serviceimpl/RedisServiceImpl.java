@@ -27,7 +27,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<User> getUsers() {
-        log.info("getUsers");
         return template.execute(new RedisCallback<List<User>>() {
             public List<User> doInRedis(RedisConnection connection) throws DataAccessException {
                 String userJson = ((StringRedisConnection) connection).get("user");
@@ -39,7 +38,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void addUser(final User user) {
-        log.info("addUser");
         template.execute(new RedisCallback<Object>() {
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
                 List<User> users = getUsers();
@@ -56,7 +54,6 @@ public class RedisServiceImpl implements RedisService {
     
     @Override
     public Long delAllUsers() {
-        log.info("delAllUsers");
         return template.execute(new RedisCallback<Long>() {
             public Long doInRedis(RedisConnection connection) throws DataAccessException {
                 return ((StringRedisConnection) connection).del("user");

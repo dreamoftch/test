@@ -8,8 +8,10 @@ public class Sort2 {
 
 	public static void main(String[] args) {
 		
-		quickSort(array, 0, array.length-1);
-		System.out.println(Arrays.toString(array));
+		/*quickSort(array, 0, array.length-1);
+		System.out.println(Arrays.toString(array));*/
+		Long long1 = 0l;
+		System.out.println(long1.longValue() == 0);
 		
 	}
 	

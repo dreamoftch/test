@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DistributeCameraMan {
+	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DistributeCameraMan.class);
 
 	public static void main(String[] args) throws Exception {
 		new DistributeCameraMan().handleNotPickedUpTask(null, null);

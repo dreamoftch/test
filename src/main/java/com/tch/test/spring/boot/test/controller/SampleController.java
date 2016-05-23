@@ -21,7 +21,6 @@ public class SampleController {
 
     @RequestMapping(value={"/", "/home"})
     String home() {
-        log.info("home ...triggered...");
         return "Hello World !";
     }
     

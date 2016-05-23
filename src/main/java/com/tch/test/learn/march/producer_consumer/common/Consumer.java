@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Slf4j
 public class Consumer implements Runnable{
+	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Consumer.class);
 
 	private Container container;
 	
@@ -26,4 +28,13 @@ public class Consumer implements Runnable{
 			}
 		}
 	}
+
+	public Container getContainer() {
+		return container;
+	}
+
+	public void setContainer(Container container) {
+		this.container = container;
+	}
+	
 }
