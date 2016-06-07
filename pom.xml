@@ -81,8 +81,53 @@
 			<artifactId>netty-all</artifactId>
 			<version>4.0.36.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>tigase</groupId>
+			<artifactId>tigase-server</artifactId>
+			<version>7.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>tigase</groupId>
+			<artifactId>tigase-message-archiving</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>tigase</groupId>
+			<artifactId>tigase-muc</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>tigase</groupId>
+			<artifactId>tigase-pubsub</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>tigase</groupId>
+			<artifactId>tigase-xmltools</artifactId>
+			<version>3.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>tigase</groupId>
+			<artifactId>tigase-utils</artifactId>
+			<version>3.4.4</version>
+		</dependency>
 	</dependencies>
 
+	<repositories>
+		<repository>
+			<id>tigase</id>
+			<name>Tigase repository</name>
+			<url>http://maven.tigase.org</url>
+		</repository>
+		<repository>
+			<id>tigase-snapshot</id>
+			<name>Tigase repository</name>
+			<url>http://build.xmpp-test.net/maven/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>

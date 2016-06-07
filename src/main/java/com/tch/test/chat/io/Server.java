@@ -48,7 +48,7 @@ public class Server {
 				String msg = null;
 				while((msg = in.readLine()) != null){
 					System.out.println("receive msg '" + msg + "' from client-" + id);
-					sendBack2Client("cllient-" + id + " said : " + msg);
+					sendBack2Client("client-" + id + " said : " + msg);
 					out.flush();
 				}
 			} catch (IOException e) {
