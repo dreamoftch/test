@@ -9,10 +9,12 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+
  
 /**
  * 图片处理类
@@ -30,32 +32,32 @@ public final class ImageUtil {
     public static void main(String[] args) throws IOException {
     	String destPath = "/media/tch/disk1/study/temp/folder/";
     	List<String> sourcePics = new ArrayList<>();
-    	sourcePics.add("/media/tch/disk1/study/temp/1.jpg");
+    	sourcePics.add("https://www.richmj.com/static/agent/userphoto/95_1473305068822_2.JPEG");
     	sourcePics.add("/media/tch/disk1/study/temp/2.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/3.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/4.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/5.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/6.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/7.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/8.jpg");
-    	sourcePics.add("/media/tch/disk1/study/temp/9.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/3.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/4.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/5.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/6.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/7.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/8.jpg");
+//    	sourcePics.add("/media/tch/disk1/study/temp/9.jpg");
     	for(int i = 1; i <= sourcePics.size(); i++){
-    		ImageUtil.getCombinationOfhead(sourcePics.subList(0, i), destPath + "out" + i + ".jpg");
+    		ImageUtil.getGroupAvatar(sourcePics.subList(0, i), destPath + "out" + i + ".jpg");
     	}
 	}
     
     /**
-     * 生成组合头像
-     * @param paths 用户图像
+     * 生成群头像
+     * @param userAvatars 用户头像
      * @throws IOException
      */
-    public static void getCombinationOfhead(List<String> paths, String destPath) throws IOException {
-    	int totalPicNum = paths.size();
+    public static void getGroupAvatar(List<String> userAvatars, String destPath) throws IOException {
+    	int totalPicNum = userAvatars.size();
     	PicInfo picInfo = getPicInfo(totalPicNum);
         List<BufferedImage> bufferedImages = new ArrayList<BufferedImage>();
         // 压缩图片所有的图片生成尺寸
         for (int i = 0; i < totalPicNum; i++) {
-            bufferedImages.add(ImageUtil.resizeImage(paths.get(i), picInfo.getPerPicWith(), picInfo.getPerPicHeight(), true));
+            bufferedImages.add(ImageUtil.resizeNetWorkImage(userAvatars.get(i), picInfo.getPerPicWith(), picInfo.getPerPicHeight(), true));
         }
         BufferedImage outImage = new BufferedImage(PIC_WIDTH, PIC_HEIGHT, BufferedImage.TYPE_INT_RGB);
         // 生成画布
@@ -103,36 +105,65 @@ public final class ImageUtil {
      * @param height 高度
      * @param fillWhite 比例不对时是否需要补白
      */
-    public static BufferedImage resizeImage(String filePath, int width, int height, boolean fillWhite) {
+    public static BufferedImage resizeImage(BufferedImage bufferedImage, int width, int height, boolean fillWhite) {
+        double ratio = 0; // 缩放比例
+		Image newImage = bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		// 计算比例
+		if ((bufferedImage.getHeight() > height) || (bufferedImage.getWidth() > width)) {
+		    if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
+		        ratio = (new Integer(height)).doubleValue()/bufferedImage.getHeight();
+		    } else {
+		        ratio = (new Integer(width)).doubleValue()/bufferedImage.getWidth();
+		    }
+		    AffineTransformOp affineTransformOp = new AffineTransformOp(AffineTransform.getScaleInstance(ratio, ratio), null);
+		    newImage = affineTransformOp.filter(bufferedImage, null);
+		}
+		if (fillWhite) {
+		    BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		    Graphics2D g = image.createGraphics();
+		    g.setColor(Color.white);
+		    g.fillRect(0, 0, width, height);
+		    if (width == newImage.getWidth(null)){
+		    	g.drawImage(newImage, 0, (height - newImage.getHeight(null))/2, newImage.getWidth(null), newImage.getHeight(null), Color.white, null);
+		    }else{
+		    	g.drawImage(newImage, (width - newImage.getWidth(null))/2, 0, newImage.getWidth(null), newImage.getHeight(null), Color.white, null);
+		    }
+		    g.dispose();
+		    newImage = image;
+		}
+		return (BufferedImage) newImage;
+    }
+    
+    /**
+     * 缩放本地图片
+     * @param file
+     * @param width
+     * @param height
+     * @param fillWhite
+     * @return
+     */
+    public static BufferedImage resizeLocalImage(File file, int width, int height, boolean fillWhite) {
         try {
-            double ratio = 0; // 缩放比例
-            File file = new File(filePath);
             BufferedImage bufferedImage = ImageIO.read(file);
-            Image itemp = bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            // 计算比例
-            if ((bufferedImage.getHeight() > height) || (bufferedImage.getWidth() > width)) {
-                if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
-                    ratio = (new Integer(height)).doubleValue()/bufferedImage.getHeight();
-                } else {
-                    ratio = (new Integer(width)).doubleValue()/bufferedImage.getWidth();
-                }
-                AffineTransformOp affineTransformOp = new AffineTransformOp(AffineTransform.getScaleInstance(ratio, ratio), null);
-                itemp = affineTransformOp.filter(bufferedImage, null);
-            }
-            if (fillWhite) {
-                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = image.createGraphics();
-                g.setColor(Color.white);
-                g.fillRect(0, 0, width, height);
-                if (width == itemp.getWidth(null)){
-                	g.drawImage(itemp, 0, (height - itemp.getHeight(null))/2, itemp.getWidth(null), itemp.getHeight(null), Color.white, null);
-                }else{
-                	g.drawImage(itemp, (width - itemp.getWidth(null))/2, 0, itemp.getWidth(null), itemp.getHeight(null), Color.white, null);
-                }
-                g.dispose();
-                itemp = image;
-            }
-            return (BufferedImage) itemp;
+            return resizeImage(bufferedImage, width, height, fillWhite);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * 缩放网络图片
+     * @param imageUrl
+     * @param width
+     * @param height
+     * @param fillWhite
+     * @return
+     */
+    public static BufferedImage resizeNetWorkImage(String imageUrl, int width, int height, boolean fillWhite) {
+        try {
+            BufferedImage bufferedImage = ImageIO.read(new URL(imageUrl));
+            return resizeImage(bufferedImage, width, height, fillWhite);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,6 +213,7 @@ public final class ImageUtil {
     	int perPicWith = PIC_WIDTH/picNumPerRow;
     	int perPicHeight = PIC_HEIGHT/picNumPerCol;
     	
+    	//图片有效宽/高
     	int effectWithHeight = Math.min(perPicWith, perPicHeight);
     	
     	PicInfo picInfo = new PicInfo();
@@ -217,7 +249,7 @@ public final class ImageUtil {
      * 填充图片信息
      * @author tianchaohui
      */
-    private static class PicInfo{
+    public static class PicInfo{
     	//每张图片宽度
     	private int perPicWith;
     	//每张图片高度
