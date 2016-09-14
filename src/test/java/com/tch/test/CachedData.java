@@ -2,6 +2,8 @@ package com.tch.test;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+
+
 class CachedData {
 	Object data;
 	volatile boolean cacheValid;

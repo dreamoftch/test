@@ -1,0 +1,306 @@
+swagger: '2.0'
+
+
+info:
+  version: "0.0.2"
+  title: 脉佳网络移动端接口文档--代理端'注册登陆'模块
+  description: |
+      更新日志：
+      
+      **0.0.3 (2016.06.15)：**
+      1. 注册/更新密码/登陆/找回密码接口，返回结果添加“errorCode”字段，该字段只有当resCode=200的时候才有值，用于标示失败原因，另外注册的接口请求参数增加“密码”，注册成功会返回token
+      2. 注册接口中的errorCode定义：errorCode=1表示手机号格式错误；errorCode=2表示验证码错误；errorCode=3表示手机号已被注册；errorCode=4表示密码格式错误；
+      3. 更新密码接口中errorCode定义：errorCode=1表示手机号格式错误；errorCode=2表示手机号不存在；errorCode=3表示密码格式错误；errorCode=4表示新密码与旧密码一样；
+      4. 登陆接口中errorCode定义：errorCode=1表示手机号格式错误；errorCode=2表示手机号不存在；errorCode=3表示邮箱不存在；errorCode=4表示密码错误；errorCode=5表示账号已关闭；errorCode=6表示账号已禁用；errorCode=7表示账号异常；
+      5. 找回密码接口中的errorCode定义：errorCode=1表示手机号格式错误；errorCode=2表示验证码错误；errorCode=3表示手机号未注册；errorCode=4表示密码格式错误；
+      6. 找回密码接口增加参数“password”
+      
+      **0.0.2 (2016.06.08)：**
+      1. 登陆成功之后，可以获取到token，app需要在之后的请求头中带上这个token，header的key为：richmj_token
+      2. 修改密码的时候，会删除该token，所以此时需要重新登陆
+      3. 如果header中没有token或者token无效，将会获得403的响应码
+
+host: richmj.com
+basePath: /
+schemes: 
+  - https
+
+
+
+paths:
+
+  /user/sendVerifyCode:
+    post:
+      tags: 
+        - user
+      description: "发送验证码"
+      summary:
+        发送验证码
+
+      parameters:
+        - in: body
+          name: ""
+          description: 参数对像
+          required: true
+          schema:
+            type: object
+            properties: 
+              cellphoneNumber:
+                type: integer
+                description: 接收验证码的手机号
+      responses:
+        200:
+          description: 请求成功。resCode=100 短信发送成功；resCode=200 短信发送失败
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: object
+            properties:
+              resCode:
+                type: integer
+                format: int64
+              msg:
+                type: string
+        400:
+          description: 参数错误
+      security:
+        - richmj_auth:
+          - read-post
+          - write-post
+
+
+  /user/regist:
+    post:
+      tags: 
+        - user
+      description: "使用手机号和验证码注册账号"
+      summary:
+        使用手机号和验证码注册账号
+
+      parameters:
+        - in: body
+          name: ""
+          description: 参数对像
+          required: true
+          schema:
+            type: object
+            properties: 
+              cellphoneNumber:
+                type: integer
+                description: 注册的手机号
+              verifyCode:
+                type: string
+                description:  验证码
+              password:
+                type: string
+                description:  密码
+      responses:
+        200:
+          description: 请求成功。resCode=100 注册成功；resCode=200 注册失败，errorCode失败code，定义见更新日志
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: object
+            properties:
+              resCode:
+                type: integer
+                format: int64
+              msg:
+                type: string
+              errorCode:
+                type: integer
+                format: int64
+                description: 错误码（当resCode=200的时候，才会有值）
+        400:
+          description: 参数错误
+      security:
+        - richmj_auth:
+          - read-post
+          - write-post
+
+
+  /user/updatePassword:
+    put:
+      tags: 
+        - user
+      description: "更新密码"
+      summary:
+        更新密码
+
+      parameters:
+        - in: body
+          name: ""
+          description: 参数对像
+          required: true
+          schema:
+            type: object
+            properties: 
+              cellphoneNumber:
+                type: integer
+                description: 账号绑定的手机号
+              password:
+                type: string
+                description:  新密码
+      responses:
+        200:
+          description: 请求成功。resCode=100 更新成功；resCode=200 更新失败，errorCode失败code，定义见更新日志
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: object
+            properties:
+              resCode:
+                type: integer
+                format: int64
+              msg:
+                type: string
+              errorCode:
+                type: integer
+                format: int64
+                description: 错误码（当resCode=200的时候，才会有值）
+        400:
+          description: 参数错误
+      security:
+        - richmj_auth:
+          - read-post
+          - write-post
+
+
+  /user/login:
+    post:
+      tags: 
+        - user
+      description: "用户登陆"
+      summary:
+        用户登陆
+
+      parameters:
+        - in: body
+          name: ""
+          description: 参数对像
+          required: true
+          schema:
+            type: object
+            properties: 
+              account:
+                type: string
+                description: 登陆的账号（手机或者邮箱）
+              password:
+                type: string
+                description:  密码
+      responses:
+        200:
+          description: 请求成功。resCode=100 登陆成功（也会包含token）；resCode=200 登陆失败，errorCode失败code，定义见更新日志
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: object
+            properties:
+              resCode:
+                type: integer
+                format: int64
+              msg:
+                type: string
+              token:
+                type: string
+                description: 身份标示，放在请求头中，只有在登陆成功的时候才会有
+              errorCode:
+                type: integer
+                format: int64
+                description: 错误码（当resCode=200的时候，才会有值）
+        400:
+          description: 参数错误
+      security:
+        - richmj_auth:
+          - read-post
+          - write-post          
+
+
+  /user/findPassword:
+    post:
+      tags: 
+        - user
+      description: "找回密码"
+      summary:
+        找回密码
+
+      parameters:
+        - in: body
+          name: ""
+          description: 参数对像
+          required: true
+          schema:
+            type: object
+            properties: 
+              cellphoneNumber:
+                type: integer
+                description: 手机号
+              verifyCode:
+                type: string
+                description:  验证码
+              password:
+                type: string
+                description:  密码
+      responses:
+        200:
+          description: 请求成功。resCode=100 找回密码成功；resCode=200 找回密码失败，errorCode失败code，定义见更新日志
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: object
+            properties:
+              resCode:
+                type: integer
+                format: int64
+              msg:
+                type: string
+              errorCode:
+                type: integer
+                format: int64
+                description: 错误码（当resCode=200的时候，才会有值）
+                
+        400:
+          description: 参数错误
+      security:
+        - richmj_auth:
+          - read-post
+          - write-post
+
+
+  /user/logout:
+    get:
+      tags: 
+        - user
+      description: "用户登出"
+      summary:
+        用户登出
+
+      
+      responses:
+        200:
+          description: 登出成功。
+      security:
+        - richmj_auth:
+          - read-post
+          - write-post
+
+      
+
+securityDefinitions:
+  richmj_auth:
+    type: oauth2
+    authorizationUrl: http://www.richmj.com/api/v1/getToken
+    flow: implicit
+    scopes:
+      read-post: 读取操作
+      write-post: 发布，评论等内容
+      
+
+        
+  
+        
+
+
+
+
+

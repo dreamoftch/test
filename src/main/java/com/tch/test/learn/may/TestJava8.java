@@ -14,10 +14,7 @@ import com.google.common.base.Strings;
 public class TestJava8 {
 
     public static void main(String[] args) {
-    	String[] array = {"a", "b", "c"};
-    	for(int i: Arrays.asList(1,2,3)){
-		  Stream.of(array).map(item -> Strings.padEnd(item, i, '@')).forEach(System.out::println);
-		}
+    	System.out.println("\"");
 
     }
 

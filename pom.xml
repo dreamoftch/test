@@ -111,6 +111,31 @@
 			<artifactId>tigase-utils</artifactId>
 			<version>3.4.4</version>
 		</dependency>
+		<dependency>
+			<!-- jsoup HTML parser library @ http://jsoup.org/ -->
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.14</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.leancloud</groupId>
+			<artifactId>leanengine</artifactId>
+			<version>0.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -126,6 +151,11 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>leancloud</id>
+			<name>LeanCloud</name>
+			<url>http://mvn.leancloud.cn/nexus/content/repositories/releases</url>
 		</repository>
 	</repositories>
 

@@ -6,8 +6,10 @@ import java.util.logging.Logger;
 
 import tigase.db.NonAuthUserRepository;
 import tigase.db.TigaseDBException;
+import tigase.server.Iq;
 import tigase.server.Message;
 import tigase.server.Packet;
+import tigase.server.Presence;
 import tigase.util.DNSResolver;
 import tigase.xml.Element;
 import tigase.xmpp.BareJID;
@@ -22,10 +24,14 @@ import tigase.xmpp.impl.annotation.Handle;
 import tigase.xmpp.impl.annotation.Handles;
 import tigase.xmpp.impl.annotation.Id;
 
-@Id("MyMessageArchivePlugin")
-@Handles({ @Handle(path = { "message" }, xmlns = "jabber:client") })
+@Id(MyMessageArchivePlugin.ID)
+@Handles({ @Handle(path = { Message.ELEM_NAME }, xmlns = "jabber:client"),
+	@Handle(path = { Presence.ELEM_NAME }, xmlns = "jabber:client"),
+	@Handle(path = { Iq.ELEM_NAME }, xmlns = "jabber:client")})
 public class MyMessageArchivePlugin extends AnnotatedXMPPProcessor implements XMPPProcessorIfc {
 
+	protected static final String ID = "MyMessageArchivePlugin";
+	
 	/**
 	 * 参考MessageArchivePlugin的实现方式
 	 */
@@ -47,7 +53,7 @@ public class MyMessageArchivePlugin extends AnnotatedXMPPProcessor implements XM
 
 	public void process(Packet packet, XMPPResourceConnection session, NonAuthUserRepository repo,
 			Queue<Packet> results, Map<String, Object> settings) throws XMPPException {
-		logger.info("com.tch.test.tigase.mytigase.plugins.MyMessageArchivePlugin.process......");
+		logger.info("我自己的plugin执行啦 packet:" + packet);
 		if (session == null) {
 			return;
 		}
