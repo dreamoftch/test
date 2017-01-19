@@ -1,15 +1,13 @@
 package com.tch.test.learn.may;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import com.tch.test.learn.may.bean.Department;
 import com.tch.test.learn.may.bean.Employ;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Lambda {
 
@@ -30,8 +28,8 @@ public class Lambda {
 		System.out.println(people.stream().map(Employ::getName).collect(Collectors.toList()));
 
 	    // Accumulate names into a TreeSet
-		System.out.println(people.stream().map(Employ::getName).collect(Collectors.toCollection(HashSet::new)));
-	    System.out.println(people.stream().map(Employ::getName).collect(Collectors.toCollection(TreeSet::new)));
+//		System.out.println(people.stream().map(Employ::getName).collect(Collectors.toCollection(HashSet::new)));
+//	    System.out.println(people.stream().map(Employ::getName).collect(Collectors.toCollection(TreeSet::new)));
 
 	    // Convert elements to strings and concatenate them, separated by commas
 	    System.out.println(people.stream().map(Employ::toString).collect(Collectors.joining(", ")));

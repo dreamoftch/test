@@ -1,10 +1,10 @@
 package com.tch.test.spring.boot.test.vo;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -16,13 +16,7 @@ public class User {
     private String address;
     private Date birthday;
     
-	public User(int age, String name, String address, Date birthday) {
-		super();
-		this.age = age;
-		this.name = name;
-		this.address = address;
-		this.birthday = birthday;
-	}
+
 
 	public int getAge() {
 		return age;

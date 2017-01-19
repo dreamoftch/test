@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Food {
 
-	public Food(int id){
-		this.id = id;
-	}
-	
+
 	private int id;
 
 	public int getId() {
